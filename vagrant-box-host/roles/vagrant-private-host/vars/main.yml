@@ -1,0 +1,13 @@
+---
+box_metadata_list:
+  - metadata: "base-trusty64.json"
+
+vagrant_boxes:
+  - name: "base-trusty64"
+    version: "1.0.0"
+    file: "boxes/base-trusty64-1.0.0-virtualbox.box"
+    provider: "virtualbox"
+  - name: "base-trusty64"
+    version: "1.1.0"
+    file: "boxes/base-trusty64-1.1.0-virtualbox.box"
+    provider: "virtualbox"

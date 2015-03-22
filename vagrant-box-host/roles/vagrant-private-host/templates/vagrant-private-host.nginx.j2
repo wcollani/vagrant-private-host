@@ -1,0 +1,12 @@
+server {
+	listen 80;
+
+        root {{nginx_folder}};
+
+	server_name  vagrant.org.com;
+
+    location / {
+	root {{boxes_folder}};
+	autoindex on;
+    }
+}

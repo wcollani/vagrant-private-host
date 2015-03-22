@@ -1,0 +1,13 @@
+---
+- hosts: all
+  user: vagrant
+  sudo: yes
+  gather_facts: no
+
+  vars:
+    ssh_port: 22
+
+  roles:
+    - common
+    - ssh
+    - users

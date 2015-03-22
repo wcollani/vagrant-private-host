@@ -1,0 +1,41 @@
+- name: Create the application user
+  user: name={{ application_user }} state=present shell="/bin/false"
+
+- name: Create boxes folder
+  file: path={{boxes_folder}} 
+        owner={{application_user}}
+        group={{application_user}}
+        state=directory
+
+- name: Install nginx config
+  template: src=vagrant-private-host.nginx.j2 
+            dest=/etc/nginx/sites-available/vagrant-private-host
+            owner=root group=root mode=0644
+  notify: restart nginx
+
+- name: Create symlink for sites-enabled
+  file: src=/etc/nginx/sites-available/vagrant-private-host
+        dest=/etc/nginx/sites-enabled/vagrant-private-host 
+        state=link
+  notify: restart nginx
+
+- name: Create vagrant box folder structure
+  file: path={{boxes_folder}}/{{org}}/{{item.name}}/versions/{{item.version}}/{{item.provider}}
+        owner={{application_user}}
+        group={{application_user}} 
+        state=directory
+  with_items: vagrant_boxes
+
+- name: Copy vagrant boxes
+  copy: src={{item.file}}
+        dest={{boxes_folder}}/{{org}}/{{item.name}}/versions/{{item.version}}/{{item.provider}}/{{item.file|replace("boxes/", "")}}
+        owner={{application_user}}
+        group={{application_user}}
+  with_items: vagrant_boxes
+
+- name: Copy vagrant box metafiles
+  template: src={{item.metadata}}.j2
+            dest={{boxes_folder}}/{{org}}/{{item.metadata}}
+            owner={{application_user}}
+            group={{application_user}}
+  with_items: box_metadata_list

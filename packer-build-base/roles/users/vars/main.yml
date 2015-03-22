@@ -1,0 +1,22 @@
+---
+custom_groups:
+  - name: techops
+    state: present
+    system: no
+    sudo: yes
+  - name: developers
+    state: present
+    system: no
+    sudo: yes
+
+users:
+  - name: user1
+    key: "{{ lookup('file', 'user1.pub') }}"
+    state: present
+    groups: techops
+    shell: /bin/bash
+  - name: user2
+    key: "{{ lookup('file', 'user2.pub') }}"
+    state: present
+    groups: developers
+    shell: /bin/bash

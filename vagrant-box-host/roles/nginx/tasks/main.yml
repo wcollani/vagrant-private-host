@@ -1,0 +1,9 @@
+---
+- name: Install nginx
+  apt: name=nginx state=latest update_cache=yes cache_valid_time=3600
+
+- name: Remove default link in sites-enabled
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: Enable nginx
+  service: name=nginx state=started enabled=yes

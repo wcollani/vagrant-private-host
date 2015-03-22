@@ -1,0 +1,21 @@
+---
+   - name: Make sure distro is fully up to date
+     apt: upgrade=full update_cache=yes cache_valid_time=3600
+
+   - name: Install base packages
+     apt: name={{ item }} state=latest update_cache=yes cache_valid_time=3600
+     with_items:
+     - ntp
+     - vim
+     - screen
+     - curl
+     - git
+     - sudo
+     - sysstat
+
+   - name: Make vim default editor
+     file: src=/usr/bin/vim dest=/etc/alternatives/editor state=link
+
+   - name: Copy /etc/ntp.conf
+     copy: src=ntp.conf dest=/etc/ntp.conf owner=root group=root mode=0644
+     notify: restart ntp

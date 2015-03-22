@@ -1,0 +1,27 @@
+---
+   - name: Create groups
+     group: name="{{ item.name }}"
+          state="{{ item.state | default("present") }}"
+          system="{{ item.system | default("no") }}"
+     with_items: custom_groups
+
+   - name: Create User
+     user: name={{ item.name }} 
+         shell={{ item.shell | default("/bin/bash") }} 
+         groups={{ item.groups | default("") }} 
+         append=yes 
+         state={{ item.state }} 
+         password={{ item.pass | default("") }}
+         update_password=always
+     with_items: users
+
+   - name: Add ssh user keys
+     authorized_key: user={{ item.name }} key="{{ item.key }}"
+     when: item.state != "absent"
+     with_items: users
+
+   - name: Backup sudoers file
+     command: cp /etc/sudoers /etc/sudoers.backup
+
+   - name: Create sudoers file
+     template: src=sudoers.j2 dest=/etc/sudoers owner=root group=root mode=0440 validate='visudo -cf %s'

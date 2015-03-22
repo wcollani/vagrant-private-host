@@ -1,0 +1,48 @@
+{
+  "variables": {
+	"version": ""
+	},
+
+  "builders": [
+	{
+  		"type": "virtualbox-ovf",
+  		"source_path": "vm_templates/trusty64-box.ovf",
+		"vm_name": "base-trusty64",
+  		"ssh_username": "vagrant",
+		"ssh_key_path": "/home/user1/.vagrant.d/insecure_private_key",
+  		"ssh_wait_timeout": "30s",
+  		"shutdown_command": "echo 'packer' | sudo -S shutdown -P now"
+	}
+
+  ],
+
+  "provisioners": [
+	{
+      		"type": "shell",
+      		"inline": [
+        		"sleep 30",
+
+        		"sudo FORCE_ADD_APT_REPOSITORY=1 add-apt-repository ppa:rquillo/ansible",
+        		"sudo apt-get update",
+        		"sudo apt-get install -y ansible git python-software-properties"
+         	]
+     	},
+     	{
+     		"type": "ansible-local",
+     		"playbook_file": "deploy.yml",
+     		"role_paths":[
+                	"roles/common",
+			"roles/users",
+			"roles/ssh"
+            	]
+  	}
+  ],
+
+  "post-processors": [
+	{
+		"type": "vagrant",
+ 		"compression_level": "9",
+		"output": "base-trusty64-{{user `version`}}-virtualbox.box"
+	}
+   ]
+}

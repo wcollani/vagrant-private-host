@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+hosts = {
+"test-box-version" => "192.168.33.19",
+}
+
+Vagrant.configure("2") do |config|
+  hosts.each do |name, ip|
+    config.vm.define name do |machine|
+        machine.vm.box = "org/base-trusty64"
+	machine.vm.box_check_update = "true"
+	machine.vm.box_url = "http://vagrant.org.com/org/base-trusty64.json"
+	machine.vm.post_up_message = "Test message"
+        machine.vm.hostname = "%s" % name
+        machine.vm.network :private_network, ip: ip
+        #machine.ssh.private_key_path = "~/.ssh/id_rsa"
+        #machine.vm.synced_folder ".", "/vagrant", id: "vagrant-root", disabled: true
+        machine.vm.provider "virtualbox" do |v|
+          v.name = name
+          v.memory = 512
+	  v.cpus = 1
+	  #v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        end
+#	machine.vm.provision "ansible" do |ansible|
+#        	ansible.playbook = "deploy.yml"
+#    	end
+
+     end
+   end
+end

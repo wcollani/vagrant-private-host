@@ -1,0 +1,15 @@
+---
+   - name: Install SSH server
+     apt: name={{ item }} state=latest update_cache=yes cache_valid_time=3600
+     with_items:
+     - openssh-server
+   
+   - name: Ensure sshd is running and enabled on boot
+     service: name=ssh state=started enabled=yes
+
+   - name: Backup sshd config
+     command: cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+
+   - name: Generate sshd config
+     template: src=sshd_config.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0644 validate='/usr/sbin/sshd -f %s -t'
+     notify: restart ssh daemon

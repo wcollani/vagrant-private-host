@@ -1,0 +1,15 @@
+---
+- hosts: all
+  user: vagrant
+  sudo: yes
+  gather_facts: no
+
+  vars:
+     org: "org"
+     application_user: "app_user"
+     nginx_folder: "/usr/share/nginx"
+     boxes_folder: "/opt/org/boxes"
+
+  roles:
+     - nginx
+     - vagrant-private-cloud
